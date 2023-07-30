@@ -4,6 +4,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
 function CityNameHeader() {
+    function formatDate(date) {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+    
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+    
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
+    
     function to24hr(timeString)
     {
         let date = new Date(`01/01/2020 ${timeString}`);
@@ -12,9 +24,13 @@ function CityNameHeader() {
     }
 
     let [city , setCity] = useState('Indore');
+
     let [resp_data , setData] = useState(
         {name :'Indore',region:'Madhya Pradesh',country:'India',
-        temp_c:0,wind_mph:0,sunrise:'',sunset:'',maxtemp_c:0,mintemp_c:0});
+        temp_c:0,wind_mph:0,sunrise:'',sunset:'',maxtemp_c:0,mintemp_c:0,condition:''});
+
+    let today_date = formatDate(new Date());
+
     let [isFormSubmitted , setFormSubmit] = useState(true);
 
     useEffect(()=>{
@@ -26,12 +42,11 @@ function CityNameHeader() {
                 var loc = res.data.location;
                 var cur = res.data.current;
                 var forecast = res.data.forecast.forecastday;
-                console.log(forecast[0]);
                 var astro = forecast[0].astro;
                 var maxtemp_c = forecast[0].day.maxtemp_c;
                 var mintemp_c = forecast[0].day.mintemp_c;
                 setData(resp_data => ({...resp_data,name:loc.name,region:loc.region,country:loc.country,temp_c:cur.temp_c,wind_mph:cur.wind_mph
-                    ,sunrise:to24hr(astro.sunrise),sunset:to24hr(astro.sunset),maxtemp_c:maxtemp_c,mintemp_c:mintemp_c}));
+                    ,sunrise:to24hr(astro.sunrise),sunset:to24hr(astro.sunset),maxtemp_c:maxtemp_c,mintemp_c:mintemp_c,condition:cur.condition.text}));
 
               })
               .catch((error)=>{
@@ -56,7 +71,7 @@ function CityNameHeader() {
                             <label htmlFor="city" className="col-form-label">City</label>
                         </div>
                         <div className='col-8'>
-                            <input type="text" id="city" value={city} onChange={(e)=>setCity(e.target.value)} className="form-control" />
+                            <input type="text" id="city" value={city} onChange={(e)=>setCity(e.target.value)} className="form-control ms-1" />
                         </div>
                         <div className='col-2'>
                             <button className='btn btn-success' onClick={(e)=>submitData(e)}>Search</button>
@@ -69,7 +84,7 @@ function CityNameHeader() {
                 {resp_data.name} , {resp_data.region} , {resp_data.country}
             </h1>
             <div>
-                Monday 29 August
+                {today_date}
             </div>
             <div className='container-fluid '>
                 <div className='row mt-2'>
@@ -78,7 +93,7 @@ function CityNameHeader() {
                             <FontAwesomeIcon className='large-text' icon={faCloudSun} />
                             &nbsp;{resp_data.temp_c}&deg;
                         </h1>
-                        <div className='below-text text-secondary'>Mostly sunnny</div>
+                        <div className='below-text text-secondary'>{resp_data.condition}</div>
                     </div>
                     <div className='col-xs-12 col-sm-6 mt-2'>
                         <div className='row'>
