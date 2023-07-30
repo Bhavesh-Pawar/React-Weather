@@ -1,0 +1,16 @@
+body{
+    background-color: darkblue !important;
+    color: white !important;
+}
+
+.large-text
+{
+    font-size:4.5rem;
+}
+.nowrap{
+    white-space: nowrap;
+}
+.below-text{
+    margin-left: 7.2rem;
+    margin-top: -1.5rem;
+}
